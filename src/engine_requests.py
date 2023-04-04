@@ -30,7 +30,9 @@ class HHRequest(EngingeRequest):
             "page": page,
             "per_page": self.per_page
         }
+
         response = requests.get(self.__url, params=params)
+
         if response.status_code == 200:
             vacancies = response.json()
             return vacancies
@@ -40,31 +42,33 @@ class HHRequest(EngingeRequest):
     def pass_by_page(self):
         """Pass data page by page"""
         data = self.request_data()
-        pages = data['pages']
+        pages: int = data['pages']
+
         for p in range(pages):
-            # pass thorough some other class?
             return self.request_data(p)
 
 
 class SJRequest(EngingeRequest):
     """Class for getting data from superjob.ru"""
 
-    def __init__(self, key_word, per_page=100) -> None:
+    def __init__(self, key_word: str, per_page: int = 100) -> None:
         """Initialize the request with parameters of request and url"""
-        self.key_word = key_word
-        self.per_page = per_page
-        self.url = "https://api.superjob.ru/2.0/vacancies/"
-        self.__id = "v3.r.130655195.6dd0db9873b05e3698bd20bcb8beeaedcd44e706.d98c5a5d24022a2455003edce45e22f69469b9e3"
+        self.key_word: str = key_word
+        self.per_page: int = per_page
+        self.url: str = "https://api.superjob.ru/2.0/vacancies/"
+        self.__id: str = "v3.r.130655195.6dd0db9873b05e3698bd20bcb8beeaedcd44e706.d98c5a5d24022a2455003edce45e22f69469b9e3"
 
-    def request_data(self, page=0) -> dict:
+    def request_data(self, page: int = 0) -> dict:
         """Got data from superjob.ru"""
         secret_key = {'X-Api-App-Id': self.__id}
-        params = {
+        params: dict = {
             "text": self.key_word,
             "page": page,
             "count": self.per_page
         }
+
         response = requests.get(self.url, headers=secret_key, params=params)
+
         if response.status_code == 200:
             vacancies = response.json()
             return vacancies
@@ -76,6 +80,6 @@ class SJRequest(EngingeRequest):
         # Максимальное количество сущностей, выдаваемых API равно 500.
         # Это значит, например, при поиске резюме по 100 резюме на страницу, всего можно просмотреть 5 страниц.
         pages = int(500 / self.per_page)
+
         for p in range(pages):
-            # pass thorough some other class?
             return self.request_data(p)
