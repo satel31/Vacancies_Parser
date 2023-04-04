@@ -55,7 +55,7 @@ class SJRequest(EngingeRequest):
         """Initialize the request with parameters of request and url"""
         self.key_word: str = key_word
         self.per_page: int = per_page
-        self.url: str = "https://api.superjob.ru/2.0/vacancies/"
+        self.__url: str = "https://api.superjob.ru/2.0/vacancies/"
         self.__id: str = "v3.r.130655195.6dd0db9873b05e3698bd20bcb8beeaedcd44e706.d98c5a5d24022a2455003edce45e22f69469b9e3"
 
     def request_data(self, page: int = 0) -> dict:
@@ -67,7 +67,7 @@ class SJRequest(EngingeRequest):
             "count": self.per_page
         }
 
-        response = requests.get(self.url, headers=secret_key, params=params)
+        response = requests.get(self.__url, headers=secret_key, params=params)
 
         if response.status_code == 200:
             vacancies = response.json()
