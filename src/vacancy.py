@@ -1,13 +1,15 @@
 from abc import ABC, abstractmethod
-import requests
-
 
 class Vacancy(ABC):
-    """Abstract class for vacancies from different platforms"""
+    """Abstract class for a vacancy"""
 
-    # @abstractmethod
-    # def sort_vacancies(self):
-    # pass
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def __str__(self):
+        pass
 
 
 class HHVacancy(Vacancy):
@@ -31,7 +33,7 @@ class HHVacancy(Vacancy):
             self.__salary_for_sort = self.key_for_sorting
             self.__short_description: str = item['snippet']['responsibility']
             self.__company_name: str = item['employer']['name']
-            #записывать не в словарь, а в файл!!!
+            # записывать не в словарь, а в файл!!!
             self.hh_vacancies.append(self)
             print(self.hh_vacancies)
             print()
@@ -77,5 +79,3 @@ class HHVacancy(Vacancy):
 
 class SJVacancy(Vacancy):
     pass
-
-
