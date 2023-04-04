@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from src.engine_requests import HHRequest, SJRequest
+
 
 class Vacancy(ABC):
     """Abstract class for a vacancy"""
@@ -8,74 +10,55 @@ class Vacancy(ABC):
         pass
 
     @abstractmethod
-    def __str__(self):
+    def vacancy_data(self):
         pass
 
 
 class HHVacancy(Vacancy):
-    """Class vor vacancies from hh.ru"""
-    url = "https://api.hh.ru/vacancies"
-    hh_vacancies = []
-    AMOUNT_OF_VACANCIES = 5
+    """Class vor vacancy from hh.ru"""
 
-    def __init__(self, key_word) -> None:
-        """Initialize the class HHVacancy and make a dictionary with vacancies data"""
-        self.key_word = key_word
-        data: dict = self.get_vacancy_data()['items']
-        for item in data:
-            print(item)
-            print()
-            self.__name: str = item['name']
-            self.__url: str = item['url']
-            self.__salary_from: int = self.set_salary(item, 'from')
-            self.__salary_to: int = self.set_salary(item, 'to')
-            self.__salary_currency: str | None = self.set_currency(item)
-            self.__salary_for_sort = self.key_for_sorting
-            self.__short_description: str = item['snippet']['responsibility']
-            self.__company_name: str = item['employer']['name']
-            # записывать не в словарь, а в файл!!!
-            self.hh_vacancies.append(self)
-            print(self.hh_vacancies)
-            print()
-            print()
+    def __init__(self, data: dict) -> None:
+        """Initialize the class HHVacancy"""
+        self.data: dict = data
 
-    def set_salary(self, vacancy, key):
+        self.__name: str = self.data['name']
+        self.__url: str = self.data['url']
+        self.__salary_from: int = self.set_salary('from')
+        self.__salary_to: int = self.set_salary('to')
+        self.__salary_currency: str = self.set_currency()
+        self.__short_description: str = self.data['snippet']['responsibility']
+        self.__company_name: str = self.data['employer']['name']
+
+    def set_salary(self, key) -> int:
+        """Change salary from/to to proper int type in case of str or None type"""
         try:
-            if isinstance(vacancy['salary'][key], int):
-                return vacancy['salary'][key]
+            if isinstance(self.data['salary'][key], int):
+                return self.data['salary'][key]
             else:
-                return int(vacancy['salary'][key])
-        except KeyError:
-            return 0
+                return int(self.data['salary'][key])
         except TypeError:
             return 0
 
-    def set_currency(self, vacancy):
+    def set_currency(self) -> str:
+        """Returns the information about the missing currency data in case of error"""
         try:
-            return vacancy['salary']['currency']
+            return self.data['salary']['currency']
         except KeyError:
-            return None
+            return 'Данные о валюте отсутствуют'
         except TypeError:
-            return None
+            return 'Данные о валюте отсутствуют'
 
     @property
-    def key_for_sorting(self):
-        if self.__salary_to >= self.__salary_from:
-            return self.__salary_to
-        else:
-            return self.__salary_from
-
-    def sort_bigger_to_lower(self):
-        self.hh_vacancies.sort(key=self.salary_to)
-
-        pass
-
-    def __str__(self):
-        pass
-
-    def __repr__(self):
-        pass
-
+    def vacancy_data(self) -> dict:
+        """Returns the dictionaty woth all necessary information"""
+        return {"Название вакансии": self.__name,
+                "Ссылка на вакансию": self.__url,
+                "Нижняя граница з/п": self.__salary_from,
+                "Верхняя граница з/п": self.__salary_to,
+                "Валюта з/п": self.__salary_currency,
+                "Краткое описание": self.__short_description,
+                "Компания": self.__company_name
+                }
 
 class SJVacancy(Vacancy):
     pass
