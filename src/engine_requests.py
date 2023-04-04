@@ -5,6 +5,11 @@ import requests
 class EngingeRequest(ABC):
     """Abstract class for getting data"""
 
+    def __init__(self, key_word: str, per_page: int = 100) -> None:
+        self.key_word = key_word
+        self.per_page = per_page
+        self.__url = None
+
     @abstractmethod
     def request_data(self):
         pass
@@ -19,8 +24,7 @@ class HHRequest(EngingeRequest):
 
     def __init__(self, key_word: str, per_page: int = 100) -> None:
         """Initialize the request with parameters of request and url"""
-        self.key_word: str = key_word
-        self.per_page: int = per_page
+        super().__init__(key_word, per_page)
         self.__url: str = "https://api.hh.ru/vacancies"
 
     def request_data(self, page: int = 0) -> dict:
@@ -53,8 +57,7 @@ class SJRequest(EngingeRequest):
 
     def __init__(self, key_word: str, per_page: int = 100) -> None:
         """Initialize the request with parameters of request and url"""
-        self.key_word: str = key_word
-        self.per_page: int = per_page
+        super().__init__(key_word, per_page)
         self.__url: str = "https://api.superjob.ru/2.0/vacancies/"
         self.__id: str = "v3.r.130655195.6dd0db9873b05e3698bd20bcb8beeaedcd44e706.d98c5a5d24022a2455003edce45e22f69469b9e3"
 
