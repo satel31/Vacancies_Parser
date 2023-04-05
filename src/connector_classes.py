@@ -15,11 +15,7 @@ class Connector(ABC):
         pass
 
     @abstractmethod
-    def select_data_all(self, clue):
-        pass
-
-    @abstractmethod
-    def select_data(self):
+    def select_data(self, parameter, clue):
         pass
 
 
@@ -28,11 +24,13 @@ class ConnectorJson(Connector):
 
     def __init__(self, filename='vacancies.json'):
         """Make file with given filename"""
-        self.filepath = f'..\Coursework_4\src\{filename}'
+        self.filepath = f'..\src\{filename}'
 
         if not os.path.exists(self.filepath):
             file = open(self.filepath, 'w', encoding='utf8')
             file.close()
+        elif filename[-5:] != '.json':
+            raise NameError('Wrong format. Correct format filename.json')
         else:
             raise OSError('File already exists. Choose a different filename')
 
@@ -68,8 +66,54 @@ class ConnectorJson(Connector):
             f.write(',')
             f.write('\n')
 
-    def select_data_all(self, clue):
+    def select_data(self, parameter, clue):
+        """Select data by parameter and clue"""
+        result = []
+
+        with open(self.filepath, 'r', encoding='utf-8') as f:
+            text = f.read()
+            text_divided = f'[{text.strip().strip(",")}]'
+
+        data = json.loads(text_divided)
+
+        for item in data:
+            try:
+                if item[parameter] == clue or clue in item[parameter]:
+                    result.append(item)
+            except KeyError:
+                print('This parameter does not exist. Please choose another')
+
+        if len(result) == 0:
+            print('There is no data for this parameter ')
+        return result
+
+    def select_by_salary(self, clue_from, clue_to):
+        """Select data by salary"""
+        result = []
+
+        with open(self.filepath, 'r', encoding='utf-8') as f:
+            text = f.read()
+            text_divided = f'[{text.strip().strip(",")}]'
+
+        data = json.loads(text_divided)
+
+        for item in data:
+            if clue_to and clue_from:
+                if item['Нижняя граница з/п'] >= clue_from and item['Верхняя граница з/п'] <= clue_to:
+                    result.append(item)
+            elif clue_to:
+                if item['Верхняя граница з/п'] <= clue_to:
+                    result.append(item)
+            elif clue_from:
+                if item['Нижняя граница з/п'] >= clue_from:
+                    result.append(item)
+
+        if len(result) == 0:
+            print('There is no data for this parameter ')
+        return result
+
+    def delete_data(self):
         pass
 
-    def select_data(self):
+    def delete_data_by_clue(self, parameter, clue):
         pass
