@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-from src.engine_requests import HHRequest, SJRequest
-
 
 class Vacancy(ABC):
     """Abstract class for a vacancy"""
@@ -43,6 +41,8 @@ class HHVacancy(Vacancy):
         try:
             return self.data['salary']['currency']
         except KeyError:
+            return 'Данные о валюте отсутствуют'
+        except TypeError:
             return 'Данные о валюте отсутствуют'
     @property
     def vacancy_data(self) -> dict:
