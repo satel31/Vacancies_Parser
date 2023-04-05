@@ -43,13 +43,18 @@ class HHRequest(EngingeRequest):
         else:
             print("Error:", response.status_code)
 
-    def pass_by_page(self):
+    def pass_by_page(self) -> list:
         """Pass data page by page"""
+        all_data = []
+
         data = self.request_data()
         pages: int = data['pages']
-
         for p in range(pages):
-            return self.request_data(p)
+            data_by_page = self.request_data(p)
+            for i in data_by_page['items']:
+                all_data.append([i])
+
+        return all_data
 
 
 class SJRequest(EngingeRequest):
@@ -84,5 +89,11 @@ class SJRequest(EngingeRequest):
         # Это значит, например, при поиске резюме по 100 резюме на страницу, всего можно просмотреть 5 страниц.
         pages = int(500 / self.per_page)
 
+        all_data = []
+
         for p in range(pages):
-            return self.request_data(p)
+            data_by_page = self.request_data(p)
+            for i in data_by_page['objects']:
+                all_data.append([i])
+
+        return all_data
