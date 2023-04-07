@@ -22,11 +22,12 @@ class ConnectorJson(Connector):
         """Make file with given filename"""
         self.filepath = f'C:/Users/Satel/PycharmProjects/Coursework_4/src/{filename}'
 
+        if filename[-5:] != '.json':
+            raise NameError('Wrong format. Correct format filename.json')
+
         if not os.path.exists(self.filepath):
             file = open(self.filepath, 'w', encoding='utf8')
             file.close()
-        elif filename[-5:] != '.json':
-            raise NameError('Wrong format. Correct format filename.json')
         else:
             raise OSError('File already exists. Choose a different filename')
 
