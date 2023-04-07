@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import requests
+from src.vacancy_classes import HHVacancy, SJVacancy
 
 
 class EngingeRequest(ABC):
@@ -15,7 +16,7 @@ class EngingeRequest(ABC):
         pass
 
     @abstractmethod
-    def pass_by_page(self):
+    def pass_by_page(self, filename):
         pass
 
 
@@ -43,13 +44,16 @@ class HHRequest(EngingeRequest):
         else:
             print("Error:", response.status_code)
 
-    def pass_by_page(self):
+    def pass_by_page(self, connection) -> list:
         """Pass data page by page"""
+
         data = self.request_data()
         pages: int = data['pages']
-
         for p in range(pages):
-            return self.request_data(p)
+            data_by_page = self.request_data(p)
+            for i in data_by_page['items']:
+                hh = HHVacancy(i)
+                connection.insert(hh.vacancy_data)
 
 
 class SJRequest(EngingeRequest):
@@ -78,11 +82,14 @@ class SJRequest(EngingeRequest):
         else:
             print("Error:", response.status_code)
 
-    def pass_by_page(self) -> dict:
+    def pass_by_page(self, connection) -> dict:
         """Pass data page by page"""
         # Максимальное количество сущностей, выдаваемых API равно 500.
         # Это значит, например, при поиске резюме по 100 резюме на страницу, всего можно просмотреть 5 страниц.
         pages = int(500 / self.per_page)
 
         for p in range(pages):
-            return self.request_data(p)
+            data_by_page = self.request_data(p)
+            for i in data_by_page['objects']:
+                sj = SJVacancy(i)
+                connection.insert(sj.vacancy_data)

@@ -1,6 +1,6 @@
 import pytest
 from src.engine_requests import HHRequest, SJRequest
-from src.vacancy import HHVacancy, SJVacancy
+from src.vacancy_classes import HHVacancy, SJVacancy
 
 
 # test for HHVacancy class
