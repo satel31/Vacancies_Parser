@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class Vacancy(ABC):
     """Abstract class for a vacancy"""
     # Exchange rates USD to RUB and EUR to RUB dd. 07/04/2023
@@ -13,22 +14,21 @@ class Vacancy(ABC):
     @abstractmethod
     def vacancy_data(self):
         pass
-
-    def top_vacancies(self, amount, data):
+    @classmethod
+    def top_vacancies(cls, amount, data):
         for item in data:
             if item['Верхняя граница з/п'] == 0:
                 item['З/п для сортировки'] = item['Нижняя граница з/п']
             else:
                 item['З/п для сортировки'] = item['Верхняя граница з/п']
             if item['Валюта з/п'].lower() == 'usd':
-                item['З/п для сортировки'] = round(item['З/п для сортировки'] * self.EXCHANGE_RATE_USD)
+                item['З/п для сортировки'] = round(item['З/п для сортировки'] * cls.EXCHANGE_RATE_USD)
             elif item['Валюта з/п'].lower() == 'eur':
-                item['З/п для сортировки'] = round(item['З/п для сортировки'] * self.EXCHANGE_RATE_EUR)
+                item['З/п для сортировки'] = round(item['З/п для сортировки'] * cls.EXCHANGE_RATE_EUR)
 
         sorted_data = sorted(data, key=lambda x: x['З/п для сортировки'], reverse=True)
 
         return sorted_data[0:amount]
-
 
 
 class HHVacancy(Vacancy):
@@ -63,6 +63,7 @@ class HHVacancy(Vacancy):
             return 'Данные о валюте отсутствуют'
         except TypeError:
             return 'Данные о валюте отсутствуют'
+
     @property
     def vacancy_data(self) -> dict:
         """Returns the dictionaty woth all necessary information"""
