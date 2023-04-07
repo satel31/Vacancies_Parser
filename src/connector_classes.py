@@ -24,7 +24,7 @@ class ConnectorJson(Connector):
 
     def __init__(self, filename='vacancies.json'):
         """Make file with given filename"""
-        self.filepath = f'..\src\{filename}'
+        self.filepath = f'C:/Users/Satel/PycharmProjects/Coursework_4/src/{filename}'
 
         if not os.path.exists(self.filepath):
             file = open(self.filepath, 'w', encoding='utf8')
@@ -50,7 +50,7 @@ class ConnectorJson(Connector):
         else:
             raise NameError('Wrong format. Correct format filename.json')
 
-    def insert_hh(self, data_to_save: dict):
+    def insert(self, data_to_save: dict):
         """Write into the file hh vacancies object by object"""
 
         with open(self.filepath, 'a', encoding='utf-8') as f:
@@ -58,23 +58,19 @@ class ConnectorJson(Connector):
             f.write(',')
             f.write('\n')
 
-    def insert_sj(self, data_to_save):
-        """Write into the file sj vacancies object by object"""
+    @property
+    def read_file(self):
+        with open(self.filepath, 'r', encoding='utf-8') as f:
+            text = f.read()
+            text_divided = f'[{text.strip().strip(",")}]'
 
-        with open(self.filepath, 'a', encoding='utf-8') as f:
-            json.dump(data_to_save, f, ensure_ascii=False)
-            f.write(',')
-            f.write('\n')
+        return json.loads(text_divided)
 
     def select_data(self, parameter, clue):
         """Select data by parameter and clue"""
         result = []
 
-        with open(self.filepath, 'r', encoding='utf-8') as f:
-            text = f.read()
-            text_divided = f'[{text.strip().strip(",")}]'
-
-        data = json.loads(text_divided)
+        data = self.read_file
 
         for item in data:
             try:
@@ -91,11 +87,7 @@ class ConnectorJson(Connector):
         """Select data by salary"""
         result = []
 
-        with open(self.filepath, 'r', encoding='utf-8') as f:
-            text = f.read()
-            text_divided = f'[{text.strip().strip(",")}]'
-
-        data = json.loads(text_divided)
+        data = self.read_file
 
         for item in data:
             if clue_to and clue_from:
