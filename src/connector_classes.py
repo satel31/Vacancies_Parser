@@ -7,11 +7,7 @@ class Connector(ABC):
     """Abstract class for writing information to some file"""
 
     @abstractmethod
-    def insert_hh(self, data_to_save):
-        pass
-
-    @abstractmethod
-    def insert_sj(self, data_to_save):
+    def insert(self, data_to_save):
         pass
 
     @abstractmethod
@@ -74,7 +70,7 @@ class ConnectorJson(Connector):
 
         for item in data:
             try:
-                if item[parameter] == clue or clue in item[parameter]:
+                if item[parameter].lower() == clue.lower() or clue.lower() in item[parameter].lower():
                     result.append(item)
             except KeyError:
                 print('This parameter does not exist. Please choose another')
@@ -105,7 +101,24 @@ class ConnectorJson(Connector):
         return result
 
     def delete_data(self):
-        pass
+        os.remove(self.filepath)
 
     def delete_data_by_clue(self, parameter, clue):
-        pass
+        result = []
+
+        data = self.read_file
+
+        if isinstance(clue, str):
+            clue = clue.lower()
+
+        for item in data:
+            try:
+                if item[parameter] != clue:
+                    result.append(item)
+            except KeyError:
+                pass
+
+        with open(self.filepath, 'w', encoding='utf-8') as f:
+            json.dump(result, f, ensure_ascii=False)
+            f.write(',')
+            f.write('\n')
