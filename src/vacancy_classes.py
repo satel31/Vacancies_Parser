@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 class Vacancy(ABC):
     """Abstract class for a vacancy"""
+    # Exchange rates USD to RUB and EUR to RUB dd. 07/04/2023
+    EXCHANGE_RATE_USD = 81.13
+    EXCHANGE_RATE_EUR = 88.91
 
     @abstractmethod
     def __init__(self):
@@ -10,6 +13,22 @@ class Vacancy(ABC):
     @abstractmethod
     def vacancy_data(self):
         pass
+
+    def top_vacancies(self, amount, data):
+        for item in data:
+            if item['Верхняя граница з/п'] == 0:
+                item['З/п для сортировки'] = item['Нижняя граница з/п']
+            else:
+                item['З/п для сортировки'] = item['Верхняя граница з/п']
+            if item['Валюта з/п'].lower() == 'usd':
+                item['З/п для сортировки'] = round(item['З/п для сортировки'] * self.EXCHANGE_RATE_USD)
+            elif item['Валюта з/п'].lower() == 'eur':
+                item['З/п для сортировки'] = round(item['З/п для сортировки'] * self.EXCHANGE_RATE_EUR)
+
+        sorted_data = sorted(data, key=lambda x: x['З/п для сортировки'], reverse=True)
+
+        return sorted_data[0:amount]
+
 
 
 class HHVacancy(Vacancy):
