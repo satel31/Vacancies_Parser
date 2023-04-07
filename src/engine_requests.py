@@ -53,7 +53,7 @@ class HHRequest(EngingeRequest):
             data_by_page = self.request_data(p)
             for i in data_by_page['items']:
                 hh = HHVacancy(i)
-                connection.insert_hh(hh.vacancy_data)
+                connection.insert(hh.vacancy_data)
 
 
 class SJRequest(EngingeRequest):
@@ -92,4 +92,4 @@ class SJRequest(EngingeRequest):
             data_by_page = self.request_data(p)
             for i in data_by_page['objects']:
                 sj = SJVacancy(i)
-                connection.insert_sj(sj.vacancy_data)
+                connection.insert(sj.vacancy_data)
