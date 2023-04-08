@@ -6,29 +6,31 @@ class Vacancy(ABC):
     # Exchange rates USD to RUB and EUR to RUB dd. 07/04/2023
     EXCHANGE_RATE_USD = 81.13
     EXCHANGE_RATE_EUR = 88.91
-
-    @abstractmethod
     def __init__(self):
-        pass
+        self._name: str = None
+        self._url: str = None
+        self._salary_from: int = None
+        self._salary_to: int = None
+        self._salary_currency: str = None
+        self._short_description: str = None
+        self._company_name: str = None
+        self._salary_for_sorting = None
 
     @abstractmethod
     def vacancy_data(self):
         pass
+
     @classmethod
     def top_vacancies(cls, amount, data):
-        for item in data:
-            if item['Верхняя граница з/п'] == 0:
-                item['З/п для сортировки'] = item['Нижняя граница з/п']
-            else:
-                item['З/п для сортировки'] = item['Верхняя граница з/п']
-            if item['Валюта з/п'].lower() == 'usd':
-                item['З/п для сортировки'] = round(item['З/п для сортировки'] * cls.EXCHANGE_RATE_USD)
-            elif item['Валюта з/п'].lower() == 'eur':
-                item['З/п для сортировки'] = round(item['З/п для сортировки'] * cls.EXCHANGE_RATE_EUR)
-
         sorted_data = sorted(data, key=lambda x: x['З/п для сортировки'], reverse=True)
 
         return sorted_data[0:amount]
+
+    def __lt__(self, other_vacancy):
+        return self._salary_for_sorting < other_vacancy._salary_for_sorting
+
+    def __gt__(self, other_vacancy):
+        return self._salary_for_sorting > other_vacancy._salary_for_sorting
 
 
 class HHVacancy(Vacancy):
@@ -37,14 +39,16 @@ class HHVacancy(Vacancy):
     def __init__(self, data: dict) -> None:
         """Initialize the class HHVacancy"""
         self.data: dict = data
+        super().__init__()
 
-        self.__name: str = self.data['name']
-        self.__url: str = self.data['url']
-        self.__salary_from: int = self.set_salary('from')
-        self.__salary_to: int = self.set_salary('to')
-        self.__salary_currency: str = self.set_currency()
-        self.__short_description: str = self.data['snippet']['responsibility']
-        self.__company_name: str = self.data['employer']['name']
+        self._name: str = self.data['name']
+        self._url: str = self.data['url']
+        self._salary_from: int = self.set_salary('from')
+        self._salary_to: int = self.set_salary('to')
+        self._salary_currency: str = self.set_currency()
+        self._short_description: str = self.data['snippet']['responsibility']
+        self._company_name: str = self.data['employer']['name']
+        self._salary_for_sorting = self.salary_for_sorting()
 
     def set_salary(self, key) -> int:
         """Change salary from/to to proper int type in case of str or None type"""
@@ -64,16 +68,28 @@ class HHVacancy(Vacancy):
         except TypeError:
             return 'Данные о валюте отсутствуют'
 
+    def salary_for_sorting(self):
+        if self._salary_to == 0:
+            self._salary_for_sorting = self._salary_from
+        else:
+            self._salary_for_sorting = self._salary_to
+        if self._salary_currency.lower() == 'usd':
+            self._salary_for_sorting = round(self._salary_for_sorting * self.EXCHANGE_RATE_USD)
+        elif self._salary_currency.lower() == 'eur':
+            self._salary_for_sorting = round(self._salary_for_sorting * self.EXCHANGE_RATE_EUR)
+        return self._salary_for_sorting
+
     @property
     def vacancy_data(self) -> dict:
         """Returns the dictionaty woth all necessary information"""
-        return {"Название вакансии": self.__name,
-                "Ссылка на вакансию": self.__url,
-                "Нижняя граница з/п": self.__salary_from,
-                "Верхняя граница з/п": self.__salary_to,
-                "Валюта з/п": self.__salary_currency,
-                "Краткое описание": self.__short_description,
-                "Компания": self.__company_name
+        return {"Название вакансии": self._name,
+                "Ссылка на вакансию": self._url,
+                "Нижняя граница з/п": self._salary_from,
+                "Верхняя граница з/п": self._salary_to,
+                "Валюта з/п": self._salary_currency,
+                "З/п для сортировки": self._salary_for_sorting,
+                "Краткое описание": self._short_description,
+                "Компания": self._company_name
                 }
 
 
@@ -83,14 +99,16 @@ class SJVacancy(Vacancy):
     def __init__(self, data: dict) -> None:
         """Initialize the class SJVacancy"""
         self.data: dict = data
+        super().__init__()
 
-        self.__name: str = self.data['profession']
-        self.__url: str = self.data['link']
-        self.__salary_from: int = self.set_salary('payment_from')
-        self.__salary_to: int = self.set_salary('payment_to')
-        self.__salary_currency: str = self.data['currency']
-        self.__short_description: str = self.set_short_description
-        self.__company_name: str = self.data['firm_name']
+        self._name: str = self.data['profession']
+        self._url: str = self.data['link']
+        self._salary_from: int = self.set_salary('payment_from')
+        self._salary_to: int = self.set_salary('payment_to')
+        self._salary_currency: str = self.data['currency']
+        self._short_description: str = self.set_short_description
+        self._company_name: str = self.data['firm_name']
+        self._salary_for_sorting = self.salary_for_sorting()
 
     def set_salary(self, key) -> int:
         """Change salary from/to to proper int type in case of str or None type"""
@@ -107,14 +125,26 @@ class SJVacancy(Vacancy):
             return "Нет описания работы"
         return self.data['work']
 
+    def salary_for_sorting(self):
+        if self._salary_to == 0:
+            self._salary_for_sorting = self._salary_from
+        else:
+            self._salary_for_sorting = self._salary_to
+        if self._salary_currency.lower() == 'usd':
+            self._salary_for_sorting = round(self._salary_for_sorting * self.EXCHANGE_RATE_USD)
+        elif self._salary_currency.lower() == 'eur':
+            self._salary_for_sorting = round(self._salary_for_sorting * self.EXCHANGE_RATE_EUR)
+        return self._salary_for_sorting
+
     @property
     def vacancy_data(self) -> dict:
         """Returns the dictionaty woth all necessary information"""
-        return {"Название вакансии": self.__name,
-                "Ссылка на вакансию": self.__url,
-                "Нижняя граница з/п": self.__salary_from,
-                "Верхняя граница з/п": self.__salary_to,
-                "Валюта з/п": self.__salary_currency,
-                "Краткое описание": self.__short_description,
-                "Компания": self.__company_name
+        return {"Название вакансии": self._name,
+                "Ссылка на вакансию": self._url,
+                "Нижняя граница з/п": self._salary_from,
+                "Верхняя граница з/п": self._salary_to,
+                "Валюта з/п": self._salary_currency,
+                "З/п для сортировки": self._salary_for_sorting,
+                "Краткое описание": self._short_description,
+                "Компания": self._company_name
                 }
