@@ -1,7 +1,6 @@
 from src.engine_requests import HHRequest, SJRequest
-from src.connector_classes import ConnectorJson
+from src.connector_classes import ConnectorJson, ConnectorTXT
 from src.vacancy_classes import Vacancy
-
 
 # Query for searching
 
@@ -9,13 +8,27 @@ print('Добрый день! Введите поисковой запрос д�
 search_query = input()
 
 # Query the name of the file
-print('Укажите имя файла, куда будут записаны результаты, в формате filename.json. '
-      'По умолчанию файл будет называться vacancies.json. Укажите "ок", если согласны с названием')
-filename = input()
-if filename.lower() == 'ок':
-    connection = ConnectorJson()
+print('Укажите формат файла, куда будут записаны результаты: json или txt')
+format_file = input()
+
+if format_file == 'json':
+    print('Укажите имя файла, куда будут записаны результаты, в формате filename.json. '
+          'По умолчанию файл будет называться vacancies.json. Укажите "ок", если согласны с названием')
+    filename = input()
+    if filename.lower() == 'ок':
+        connection = ConnectorJson()
+    else:
+        connection = ConnectorJson(filename)
+elif format_file == 'txt':
+    print('Укажите имя файла, куда будут записаны результаты, в формате filename.txt. '
+          'По умолчанию файл будет называться vacancies.txt. Укажите "ок", если согласны с названием')
+    filename = input()
+    if filename.lower() == 'ок':
+        connection = ConnectorTXT()
+    else:
+        connection = ConnectorTXT(filename)
 else:
-    connection = ConnectorJson(filename)
+    print('К сожалению, такого формата нет. Начните сначала.')
 
 # Request for vacancies
 hh = HHRequest(search_query)
@@ -27,6 +40,7 @@ sj.pass_by_page(connection)
 
 print(f'Вакансии по Вашему запросу записаны в файл {connection.filename}')
 
+
 def user_interaction(connection):
     print('Теперь Вы можете:\n'
           '1) Найти новые вакансии\n'
@@ -36,11 +50,11 @@ def user_interaction(connection):
           '5) Вывести все вакансии\n'
           '6) Удалить файл')
 
-    parameters_to_sort = '1) Название вакансии\n'\
-                         '2) Нижняя граница з/п\n'\
-                         '3) Верхняя граница з/п\n'\
-                         '4) Нижняя граница з/п и верхняя граница з/п\n'\
-                         '5) Валюта з/п\n'\
+    parameters_to_sort = '1) Название вакансии\n' \
+                         '2) Нижняя граница з/п\n' \
+                         '3) Верхняя граница з/п\n' \
+                         '4) Нижняя граница з/п и верхняя граница з/п\n' \
+                         '5) Валюта з/п\n' \
                          '6) Компания'
 
     user_action = input('Введите действие ')
@@ -120,11 +134,8 @@ def user_interaction(connection):
         sj_new.pass_by_page(connection)
 
 
-
-
 if __name__ == '__main__':
     user_action = input('Вы хотите продолжить? ')
     while user_action.lower() == 'да':
         user_interaction(connection)
         user_action = input('Вы хотите продолжить? ')
-
