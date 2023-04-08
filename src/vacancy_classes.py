@@ -6,6 +6,7 @@ class Vacancy(ABC):
     # Exchange rates USD to RUB and EUR to RUB dd. 07/04/2023
     EXCHANGE_RATE_USD = 81.13
     EXCHANGE_RATE_EUR = 88.91
+
     def __init__(self):
         self._name: str = None
         self._url: str = None
@@ -43,14 +44,14 @@ class HHVacancy(Vacancy):
 
         self._name: str = self.data['name']
         self._url: str = self.data['url']
-        self._salary_from: int = self.set_salary('from')
-        self._salary_to: int = self.set_salary('to')
-        self._salary_currency: str = self.set_currency()
+        self._salary_from: int = self.__set_salary('from')
+        self._salary_to: int = self.__set_salary('to')
+        self._salary_currency: str = self.__set_currency()
         self._short_description: str = self.data['snippet']['responsibility']
         self._company_name: str = self.data['employer']['name']
-        self._salary_for_sorting = self.salary_for_sorting()
+        self._salary_for_sorting = self.__salary_for_sorting()
 
-    def set_salary(self, key) -> int:
+    def __set_salary(self, key) -> int:
         """Change salary from/to to proper int type in case of str or None type"""
         try:
             return int(self.data['salary'][key])
@@ -59,7 +60,7 @@ class HHVacancy(Vacancy):
         except ValueError:
             return 0
 
-    def set_currency(self) -> str:
+    def __set_currency(self) -> str:
         """Returns the information about the missing currency data in case of error"""
         try:
             return self.data['salary']['currency']
@@ -68,7 +69,7 @@ class HHVacancy(Vacancy):
         except TypeError:
             return 'Данные о валюте отсутствуют'
 
-    def salary_for_sorting(self):
+    def __salary_for_sorting(self):
         if self._salary_to == 0:
             self._salary_for_sorting = self._salary_from
         else:
@@ -103,14 +104,14 @@ class SJVacancy(Vacancy):
 
         self._name: str = self.data['profession']
         self._url: str = self.data['link']
-        self._salary_from: int = self.set_salary('payment_from')
-        self._salary_to: int = self.set_salary('payment_to')
+        self._salary_from: int = self.__set_salary('payment_from')
+        self._salary_to: int = self.__set_salary('payment_to')
         self._salary_currency: str = self.data['currency']
-        self._short_description: str = self.set_short_description
+        self._short_description: str = self.__set_short_description
         self._company_name: str = self.data['firm_name']
-        self._salary_for_sorting = self.salary_for_sorting()
+        self._salary_for_sorting = self.__salary_for_sorting()
 
-    def set_salary(self, key) -> int:
+    def __set_salary(self, key) -> int:
         """Change salary from/to to proper int type in case of str or None type"""
         try:
             return int(self.data[key])
@@ -120,12 +121,12 @@ class SJVacancy(Vacancy):
             return 0
 
     @property
-    def set_short_description(self):
+    def __set_short_description(self):
         if self.data['work'] is None:
             return "Нет описания работы"
         return self.data['work']
 
-    def salary_for_sorting(self):
+    def __salary_for_sorting(self):
         if self._salary_to == 0:
             self._salary_for_sorting = self._salary_from
         else:
