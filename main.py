@@ -1,149 +1,48 @@
 from src.engine_requests import HHRequest, SJRequest
 from src.connector_classes import ConnectorJson, ConnectorTXT
-from src.vacancy_classes import Vacancy
-
-# Query for searching
-
-print('Добрый день! Введите поисковой запрос для поиска вакансий на платформах HeadHunter и SuperJob')
-search_query = input()
-
-# Query the name of the file
-print('Укажите формат файла, куда будут записаны результаты: json или txt')
-format_file = input()
-
-if format_file == 'json':
-    print('Укажите имя файла, куда будут записаны результаты, в формате filename.json. '
-          'По умолчанию файл будет называться vacancies.json. Укажите "ок", если согласны с названием')
-    filename = input()
-    if filename.lower() == 'ок':
-        connection = ConnectorJson()
-    else:
-        connection = ConnectorJson(filename)
-elif format_file == 'txt':
-    print('Укажите имя файла, куда будут записаны результаты, в формате filename.txt. '
-          'По умолчанию файл будет называться vacancies.txt. Укажите "ок", если согласны с названием')
-    filename = input()
-    if filename.lower() == 'ок':
-        connection = ConnectorTXT()
-    else:
-        connection = ConnectorTXT(filename)
-else:
-    print('К сожалению, такого формата нет. Начните сначала.')
-
-# Request for vacancies
-hh = HHRequest(search_query)
-sj = SJRequest(search_query)
-
-# Write to file
-hh.pass_by_page(connection)
-sj.pass_by_page(connection)
-
-print(f'Вакансии по Вашему запросу записаны в файл {connection.filename}')
-
-
-def user_interaction(connection):
-    print('Теперь Вы можете:\n'
-          '1) Найти новые вакансии\n'
-          '2) Сортировка вакансий\n'
-          '3) Вывести топ вакансии по уровню з/п\n'
-          '4) Удалить вакансии\n'
-          '5) Вывести все вакансии\n'
-          '6) Переименовать файл\n'
-          '7) Удалить файл')
-
-    parameters_to_sort = '1) Название вакансии\n' \
-                         '2) Нижняя граница з/п\n' \
-                         '3) Верхняя граница з/п\n' \
-                         '4) Нижняя граница з/п и верхняя граница з/п\n' \
-                         '5) Валюта з/п\n' \
-                         '6) Компания'
-
-    user_action = input('Введите действие ')
-
-    if user_action == 'Сортировка вакансий':
-        print(f'Выберите один из доступных параметров для сортировки:\n {parameters_to_sort}')
-        user_parameter_sort = input()
-        if user_parameter_sort == 'Нижняя граница з/п':
-            print('Введите сумму для сортировки')
-            clue_from = int(input())
-            clue_to = None
-            result = connection.select_by_salary(clue_from, clue_to)
-        elif user_parameter_sort == 'Верхняя граница з/п':
-            print('Введите сумму для сортировки')
-            clue_from = None
-            clue_to = int(input())
-            result = connection.select_by_salary(clue_from, clue_to)
-        elif user_parameter_sort == 'Нижняя граница з/п и верхняя граница з/п':
-            print('Введите суммы для сортировки в формате ХХХ - ХХХ')
-            clues = input().split(' - ')
-            clue_from = int(clues[0])
-            clue_to = int(clues[1])
-            result = connection.select_by_salary(clue_from, clue_to)
-        else:
-            print('Введите ключевое слово для сортировки')
-            clue = input()
-            result = connection.select_data(user_parameter_sort, clue)
-
-        for item in result:
-            print(item)
-    elif user_action == 'Вывести топ вакансии по уровню з/п':
-        print('Введите количество вакансий в топе')
-        amount = int(input())
-        data = connection.read_file
-        result = Vacancy.top_vacancies(amount, data)
-
-        for item in result:
-            print(item)
-
-    elif user_action == 'Удалить вакансии':
-        print(f'Выберите один из доступных параметров для сортировки:{parameters_to_sort}')
-        user_parameter_del = input()
-        print('Введите ключевое слово для удаления')
-        if user_parameter_del == 'Нижняя граница з/п' or user_parameter_del == 'Верхняя граница з/п':
-            clue_del = int(input())
-            connection.delete_by_clue(user_parameter_del, clue_del)
-        elif user_parameter_del == 'Нижняя граница з/п и верхняя граница з/п':
-            print('Введите суммы для сортировки в формате ХХХ - ХХХ')
-            clues = input().split(' - ')
-            clue_from = int(clues[0])
-            clue_to = int(clues[1])
-            connection.delete_by_clue(user_parameter_del, clue_from)
-            connection.delete_by_clue(user_parameter_del, clue_to)
-        else:
-            clue_del = input()
-            connection.delete_data_by_clue(user_parameter_del, clue_del)
-
-    elif user_action == 'Вывести все вакансии':
-        result = connection.read_file
-
-        for item in result:
-            print(item)
-
-    elif user_action == 'Удалить файл':
-        connection.delete_data()
-        print('Работа завершена. Файл успешно удалён')
-
-    elif user_action == 'Найти новые вакансии':
-        print('Введите поисковой запрос для поиска вакансий на платформах HeadHunter и SuperJob')
-        search_query = input()
-        # Request for vacancies
-        hh_new = HHRequest(search_query)
-        sj_new = SJRequest(search_query)
-
-        # Write to file
-        hh_new.pass_by_page(connection)
-        sj_new.pass_by_page(connection)
-
-    elif user_action == 'Переименовать файл':
-        print('Введите новое имя файл в формате filename.json или filename.txt в соответствии с актуальным форматом файла')
-        new_filename = input()
-        connection.filename = new_filename
-        print(f'Имя файла изменено на {connection.filename}')
-
-
+from src.user_interaction import user_interaction
 
 if __name__ == '__main__':
+    # Query for searching
+
+    print('Добрый день! Введите поисковой запрос для поиска вакансий на платформах HeadHunter и SuperJob')
+    search_query = input()
+
+    # Query the name of the file
+    print('Укажите формат файла, куда будут записаны результаты: json или txt')
+    format_file = input()
+
+    if format_file == 'json':
+        print('Укажите имя файла, куда будут записаны результаты, в формате filename.json. '
+              'По умолчанию файл будет называться vacancies.json. Укажите "ок", если согласны с названием')
+        filename = input()
+        if filename.lower() == 'ок':
+            connection = ConnectorJson()
+        else:
+            connection = ConnectorJson(filename)
+    elif format_file == 'txt':
+        print('Укажите имя файла, куда будут записаны результаты, в формате filename.txt. '
+              'По умолчанию файл будет называться vacancies.txt. Укажите "ок", если согласны с названием')
+        filename = input()
+        if filename.lower() == 'ок':
+            connection = ConnectorTXT()
+        else:
+            connection = ConnectorTXT(filename)
+    else:
+        print('К сожалению, такого формата нет. Начните сначала.')
+
+    # Request for vacancies
+    hh = HHRequest(search_query)
+    sj = SJRequest(search_query)
+
+    # Write to file
+    hh.pass_by_page(connection)
+    sj.pass_by_page(connection)
+
+    print(f'Вакансии по Вашему запросу записаны в файл {connection.filename}')
+
     user_action = input('Вы хотите продолжить? ')
+
     while user_action.lower() == 'да':
         user_interaction(connection)
         user_action = input('Вы хотите продолжить? ')
