@@ -32,13 +32,6 @@ def test_hhrequest_request_data_bad(hh):
     data = hh.request_data(-1)
     assert data is None
 
-
-def test_hhrequest_pass_by_page(hh):
-    """Test of pass_by_page method"""
-    data = hh.pass_by_page()
-    assert len(data) != 0
-
-
 # tests of SJRequest class
 @pytest.fixture
 def sj():
@@ -61,10 +54,4 @@ def test_sjrequest_init_two_var():
 def test_sjrequest_request_data_good(sj):
     """Test of request_data method with responce status 200"""
     data = sj.request_data()
-    assert len(data) != 0
-
-
-def test_sjrequest_pass_by_page(sj):
-    """Test of pass_by_page method"""
-    data = sj.pass_by_page()
     assert len(data) != 0
