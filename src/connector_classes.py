@@ -11,7 +11,23 @@ class Connector(ABC):
         pass
 
     @abstractmethod
+    def read_file(self):
+        pass
+
+    @abstractmethod
     def select_data(self, parameter, clue):
+        pass
+
+    @abstractmethod
+    def select_by_salary(self, clue_from, clue_to):
+        pass
+
+    @abstractmethod
+    def delete_data(self):
+        pass
+
+    @abstractmethod
+    def delete_data_by_clue(self, parameter, clue):
         pass
 
 
