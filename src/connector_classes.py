@@ -1,7 +1,6 @@
 import os
 from abc import ABC, abstractmethod
 import json
-import _pickle as pickle
 
 class Connector(ABC):
     """Abstract class for writing information to some file"""
