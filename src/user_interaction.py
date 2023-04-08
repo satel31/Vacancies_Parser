@@ -1,6 +1,7 @@
 from src.connector_classes import ConnectorJson, ConnectorTXT
 from src.vacancy_classes import Vacancy
 
+
 def user_interaction(connection):
     """Ask the user for some action. Repeats, untill the user says no"""
 
@@ -107,8 +108,8 @@ def user_interaction(connection):
 
     elif user_action == 'Переименовать файл':
 
-        print('Введите новое имя файл в формате filename.json или filename.txt в соответствии с актуальным форматом файла')
+        print(
+            'Введите новое имя файл в формате filename.json или filename.txt в соответствии с актуальным форматом файла')
         new_filename = input()
         connection.filename = new_filename
         print(f'Имя файла изменено на {connection.filename}')
-
