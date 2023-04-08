@@ -20,7 +20,7 @@ def test_hh_init(hh):
     assert hh.vacancy_data == {'Название вакансии': 'Data Scientist (Computer Vision)',
                                'Ссылка на вакансию': 'https://api.hh.ru/areas/112',
                                'Верхняя граница з/п': 0, 'Нижняя граница з/п': 0,
-                               'Валюта з/п': 'Данные о валюте отсутствуют',
+                               'Валюта з/п': 'Данные о валюте отсутствуют', 'З/п для сортировки': 0,
                                'Краткое описание': 'Разрабатывать модели машинного обучения.',
                                'Компания': 'red_mad_robot'}
 
@@ -57,6 +57,7 @@ def test_sj_init(sj):
                                'Нижняя граница з/п': 0,
                                'Верхняя граница з/п': 0,
                                'Валюта з/п': 'rub',
+                               'З/п для сортировки': 0,
                                'Краткое описание': 'blablabla',
                                'Компания': 'random'}
 
@@ -74,3 +75,24 @@ def test_sj_init_2():
     assert sj_test.vacancy_data['Верхняя граница з/п'] == 0
     assert sj_test.vacancy_data['Нижняя граница з/п'] == 10000
     assert sj_test.vacancy_data['Краткое описание'] == "Нет описания работы"
+def test_vacancy_lt_gt():
+    test_data_1 = {'profession': 'Data Scientist (Computer Vision)',
+                 'link': 'https://www.superjob.ru/vakansii/prodavec-kassir-34322259.html',
+                 'payment_from': 10000,
+                 'payment_to': 50000,
+                 'currency': 'usd',
+                 'work': None,
+                 'firm_name': 'random',
+                 }
+    test_data_2 = {'profession': 'Data Scientist (Computer Vision)',
+                 'link': 'https://www.superjob.ru/vakansii/prodavec-kassir-34322259.html',
+                 'payment_from': 10000,
+                 'payment_to': 30000,
+                 'currency': 'rub',
+                 'work': None,
+                 'firm_name': 'random',
+                 }
+    vacancy_1 = SJVacancy(test_data_1)
+    vacancy_2 = SJVacancy(test_data_2)
+    assert vacancy_1.__lt__(vacancy_2) is False
+    assert vacancy_1.__gt__(vacancy_2) is True
