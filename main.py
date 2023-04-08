@@ -48,7 +48,8 @@ def user_interaction(connection):
           '3) Вывести топ вакансии по уровню з/п\n'
           '4) Удалить вакансии\n'
           '5) Вывести все вакансии\n'
-          '6) Удалить файл')
+          '6) Переименовать файл\n'
+          '7) Удалить файл')
 
     parameters_to_sort = '1) Название вакансии\n' \
                          '2) Нижняя граница з/п\n' \
@@ -132,6 +133,13 @@ def user_interaction(connection):
         # Write to file
         hh_new.pass_by_page(connection)
         sj_new.pass_by_page(connection)
+
+    elif user_action == 'Переименовать файл':
+        print('Введите новое имя файл в формате filename.json или filename.txt в соответствии с актуальным форматом файла')
+        new_filename = input()
+        connection.filename = new_filename
+        print(f'Имя файла изменено на {connection.filename}')
+
 
 
 if __name__ == '__main__':
