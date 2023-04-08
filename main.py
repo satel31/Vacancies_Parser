@@ -29,11 +29,12 @@ print(f'Вакансии по Вашему запросу записаны в ф
 
 def user_interaction(connection):
     print('Теперь Вы можете:\n'
-          '1) Сортировка вакансий\n'
-          '2) Вывести топ вакансии по уровню з/п\n'
-          '3) Удалить вакансии\n'
-          '4) Вывести все вакансии\n'
-          '5) Удалить файл')
+          '1) Найти новые вакансии\n'
+          '2) Сортировка вакансий\n'
+          '3) Вывести топ вакансии по уровню з/п\n'
+          '4) Удалить вакансии\n'
+          '5) Вывести все вакансии\n'
+          '6) Удалить файл')
 
     parameters_to_sort = '1) Название вакансии\n'\
                          '2) Нижняя граница з/п\n'\
@@ -45,7 +46,7 @@ def user_interaction(connection):
     user_action = input('Введите действие ')
 
     if user_action == 'Сортировка вакансий':
-        print(f'Выберите один из доступных параметров для сортировки:{parameters_to_sort}')
+        print(f'Выберите один из доступных параметров для сортировки:\n {parameters_to_sort}')
         user_parameter_sort = input()
         if user_parameter_sort == 'Нижняя граница з/п':
             print('Введите сумму для сортировки')
@@ -106,6 +107,19 @@ def user_interaction(connection):
     elif user_action == 'Удалить файл':
         connection.delete_data()
         print('Работа завершена. Файл успешно удалён')
+
+    elif user_action == 'Найти новые вакансии':
+        print('Введите поисковой запрос для поиска вакансий на платформах HeadHunter и SuperJob')
+        search_query = input()
+        # Request for vacancies
+        hh_new = HHRequest(search_query)
+        sj_new = SJRequest(search_query)
+
+        # Write to file
+        hh_new.pass_by_page(connection)
+        sj_new.pass_by_page(connection)
+
+
 
 
 if __name__ == '__main__':
