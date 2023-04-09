@@ -62,7 +62,7 @@ class HHVacancy(Vacancy):
         super().__init__()
 
         self._name: str = self.data['name']
-        self._url: str = self.data['url']
+        self._url: str = self.data['alternate_url']
         self._salary_from: int = self.__set_salary('from')
         self._salary_to: int = self.__set_salary('to')
         self._salary_currency: str = self.__set_currency()

@@ -8,7 +8,7 @@ from src.vacancy_classes import HHVacancy, SJVacancy
 @pytest.fixture
 def hh():
     test_data = {'name': 'Data Scientist (Computer Vision)',
-                 'url': 'https://api.hh.ru/areas/112',
+                 'alternate_url': 'https://api.hh.ru/areas/112',
                  'salary': {'from': None, "to": None},
                  'employer': {'id': '567799', 'name': 'red_mad_robot'},
                  'snippet': {'responsibility': 'Разрабатывать модели машинного обучения.'}}
