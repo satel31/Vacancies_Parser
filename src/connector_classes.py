@@ -36,7 +36,7 @@ class ConnectorJson(Connector):
 
     def __init__(self, filename: str = 'vacancies.json') -> None:
         """Make file with given filename"""
-        self.filepath: str = f'../src/{filename}'
+        self.filepath: str = f'src/{filename}'
 
         if filename[-5:] != '.json':
             raise NameError('Неправильный формат файла. Верный формат: filename.json')
@@ -156,7 +156,7 @@ class ConnectorTXT(Connector):
     def __init__(self, filename: str = 'vacancies.txt') -> None:
         """Make file with given filename"""
 
-        self.filepath = f'../src/{filename}'
+        self.filepath = f'src/{filename}'
 
         if filename[-4:] != '.txt':
             raise NameError('Неправильный формат файла. Верный формат: filename.txt')
