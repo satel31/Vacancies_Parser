@@ -41,8 +41,8 @@ if __name__ == '__main__':
 
     print(f'Вакансии по Вашему запросу записаны в файл {connection.filename}')
 
-    user_action = input('Вы хотите продолжить? ')
+    user_action = input('Вы хотите продолжить? Введите да/нет ')
 
     while user_action.lower() == 'да':
         user_interaction(connection)
-        user_action = input('Вы хотите продолжить? ')
+        user_action = input('Вы хотите продолжить? Введите да/нет ')

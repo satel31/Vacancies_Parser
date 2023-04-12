@@ -21,7 +21,7 @@ def user_interaction(connection):
                          '5) Валюта з/п\n' \
                          '6) Компания'
 
-    user_action: str = input('Введите действие ')
+    user_action: str = input('Введите действие, как указано выше ')
 
     if user_action == 'Сортировка вакансий':
         print(f'Выберите один из доступных параметров для сортировки:\n {parameters_to_sort}')
@@ -108,8 +108,9 @@ def user_interaction(connection):
 
     elif user_action == 'Переименовать файл':
 
-        print(
-            'Введите новое имя файл в формате filename.json или filename.txt в соответствии с актуальным форматом файла')
+        print('Введите новое имя файл в формате filename.json или filename.txt в соответствии с актуальным форматом файла')
         new_filename = input()
         connection.filename = new_filename
         print(f'Имя файла изменено на {connection.filename}')
+    else:
+        print('К сожалению такое действие невозможно. Попробуйте ещё раз. Не забывайте указывать действия, как в образце')
