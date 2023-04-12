@@ -1,4 +1,4 @@
-from src.connector_classes import ConnectorJson, ConnectorTXT
+from src.connector_classes import ConnectorJson, ConnectorTXT, Connector
 from src.vacancy_classes import Vacancy
 
 
@@ -21,7 +21,7 @@ def user_interaction(connection):
                          '5) Валюта з/п\n' \
                          '6) Компания'
 
-    user_action: str = input('Введите действие, как указано выше ')
+    user_action: str = input('Введите действие, как указано выше, без цифры')
 
     if user_action == 'Сортировка вакансий':
         print(f'Выберите один из доступных параметров для сортировки:\n {parameters_to_sort}')
@@ -91,7 +91,7 @@ def user_interaction(connection):
             print(item)
 
     elif user_action == 'Удалить файл':
-        connection.delete_data()
+        Connector.delete_data(connection.filepath)
         print('Работа завершена. Файл успешно удалён')
 
     elif user_action == 'Найти новые вакансии':

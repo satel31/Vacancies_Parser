@@ -1,5 +1,5 @@
 from src.engine_requests import HHRequest, SJRequest
-from src.connector_classes import ConnectorJson, ConnectorTXT
+from src.connector_classes import ConnectorJson, ConnectorTXT, Connector
 from src.user_interaction import user_interaction
 
 if __name__ == '__main__':
@@ -17,17 +17,53 @@ if __name__ == '__main__':
               'По умолчанию файл будет называться vacancies.json. Укажите "ок", если согласны с названием')
         filename = input()
         if filename.lower() == 'ок':
-            connection = ConnectorJson()
+            try:
+                connection = ConnectorJson()
+            except OSError:
+                print('Файл уже существует. Хотите перезаписать файл? Введите да/нет')
+                user_rewrite = input()
+                if user_rewrite.lower() == 'да':
+                    Connector.delete_data('src/vacancies.json')
+                    connection = ConnectorJson()
+                elif user_rewrite.lower() == 'нет':
+                    print("Начните сначала")
         else:
-            connection = ConnectorJson(filename)
+            try:
+                connection = ConnectorJson(filename)
+            except OSError:
+                print('Файл уже существует. Хотите перезаписать файл? Введите да/нет')
+                user_rewrite = input()
+                if user_rewrite.lower() == 'да':
+                    Connector.delete_data(f'src/{filename}.json')
+                    connection = ConnectorJson(filename)
+                elif user_rewrite.lower() == 'нет':
+                    print("Начните сначала")
     elif format_file == 'txt':
         print('Укажите имя файла, куда будут записаны результаты, в формате filename.txt. '
               'По умолчанию файл будет называться vacancies.txt. Укажите "ок", если согласны с названием')
         filename = input()
         if filename.lower() == 'ок':
-            connection = ConnectorTXT()
+            try:
+                connection = ConnectorTXT()
+            except OSError:
+                print('Файл уже существует. Хотите перезаписать файл? Введите да/нет')
+                user_rewrite = input()
+                if user_rewrite.lower() == 'да':
+                    Connector.delete_data('src/vacancies.txt')
+                    connection = ConnectorTXT()
+                elif user_rewrite.lower() == 'нет':
+                    print("Начните сначала")
         else:
-            connection = ConnectorTXT(filename)
+            try:
+                connection = ConnectorTXT(filename)
+            except OSError:
+                print('Файл уже существует. Хотите перезаписать файл? Введите да/нет')
+                user_rewrite = input()
+                if user_rewrite.lower() == 'да':
+                    Connector.delete_data(f'src/{filename}.txt')
+                    connection = ConnectorTXT()
+                elif user_rewrite.lower() == 'нет':
+                    print("Начните сначала")
     else:
         print('К сожалению, такого формата нет. Начните сначала.')
 

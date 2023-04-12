@@ -22,10 +22,11 @@ class Connector(ABC):
     def select_by_salary(self, clue_from, clue_to):
         pass
 
-    def delete_data(self) -> None:
+    @staticmethod
+    def delete_data(filepath) -> None:
         """Delete file"""
 
-        os.remove(self.filepath)
+        os.remove(filepath)
 
     @abstractmethod
     def delete_data_by_clue(self, parameter, clue):
@@ -95,7 +96,7 @@ class ConnectorJson(Connector):
                 if item[parameter].lower() == clue.lower() or clue.lower() in item[parameter].lower():
                     result.append(item)
             except KeyError:
-                print('Этого параметра не существует. Пожалуйста, выберите другой')
+                pass
 
         if len(result) == 0:
             print('Нет данных, соответствующих данному параметру')
@@ -122,6 +123,7 @@ class ConnectorJson(Connector):
         if len(result) == 0:
             print('Нет данных, соответствующих данному параметру')
         return result
+
     def delete_data_by_clue(self, parameter: str, clue: str | int) -> None:
         """Delete data from the file by given parameter and clue"""
 
@@ -209,7 +211,7 @@ class ConnectorTXT(Connector):
                 if item[parameter].lower() == clue.lower() or clue.lower() in item[parameter].lower():
                     result.append(item)
             except KeyError:
-                print('Этого параметра не существует. Пожалуйста, выберите другой')
+                pass
 
         if len(result) == 0:
             print('Нет данных, соответствующих данному параметру')
