@@ -22,9 +22,10 @@ class Connector(ABC):
     def select_by_salary(self, clue_from, clue_to):
         pass
 
-    @abstractmethod
-    def delete_data(self):
-        pass
+    def delete_data(self) -> None:
+        """Delete file"""
+
+        os.remove(self.filepath)
 
     @abstractmethod
     def delete_data_by_clue(self, parameter, clue):
@@ -121,12 +122,6 @@ class ConnectorJson(Connector):
         if len(result) == 0:
             print('Нет данных, соответствующих данному параметру')
         return result
-
-    def delete_data(self) -> None:
-        """Delete file"""
-
-        os.remove(self.filepath)
-
     def delete_data_by_clue(self, parameter: str, clue: str | int) -> None:
         """Delete data from the file by given parameter and clue"""
 
@@ -242,11 +237,6 @@ class ConnectorTXT(Connector):
             print('Нет данных, соответствующих данному параметру')
 
         return result
-
-    def delete_data(self) -> None:
-        """Delete file"""
-
-        os.remove(self.filepath)
 
     def delete_data_by_clue(self, parameter: str, clue: str | int) -> None:
         """Delete data from the file by given parameter and clue"""
